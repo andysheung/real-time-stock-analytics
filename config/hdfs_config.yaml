@@ -1,0 +1,25 @@
+# HDFS Configuration
+hdfs:
+  # NameNode connection
+  namenode_host: "localhost"
+  namenode_port: 9000
+  namenode_web_ui: "http://localhost:9870"
+  
+  # HDFS paths
+  paths:
+    base: "/stock-data"
+    raw:
+      prices: "/stock-data/raw/prices"
+      volumes: "/stock-data/raw/volumes"
+    lakehouse:
+      prices: "/stock-data/lakehouse/prices"
+      volumes: "/stock-data/lakehouse/volumes"
+  
+  # HDFS settings
+  replication_factor: 2
+  block_size: 134217728  # 128MB
+  
+  # Client settings
+  client:
+    timeout: 30000  # milliseconds
+    retry_count: 3

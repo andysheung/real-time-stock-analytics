@@ -1,0 +1,75 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: |
+          pip install flake8 pylint
+          pip install -r requirements.txt
+      
+      - name: Lint Python code
+        run: |
+          flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
+          pylint src/ --disable=all --enable=E,F
+      
+      - name: Check YAML syntax
+        run: |
+          pip install yamllint
+          yamllint config/*.yaml
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Run unit tests
+        run: |
+          # Add unit tests when available
+          echo "Unit tests to be implemented"
+      
+      - name: Check imports
+        run: |
+          python -m py_compile src/**/*.py
+
+  docker-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Validate docker-compose
+        run: |
+          docker-compose config
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Run security scan
+        run: |
+          # Add security scanning tools
+          echo "Security scanning to be implemented"
+          # Example: bandit, safety, etc.

@@ -1,0 +1,57 @@
+# Spark Configuration
+spark:
+  app_name: "StockAnalyticsStreaming"
+  master: "local[*]"
+  
+  # Kafka Integration
+  kafka:
+    bootstrap_servers: "localhost:9092"
+    topics:
+      stock_prices: "stock-prices"
+      stock_volumes: "stock-volumes"
+    starting_offsets: "latest"  # or "earliest"
+    fail_on_data_loss: false
+    consumer_group_id: "stock-analytics-group"  # Consumer group ID for Kafka
+  
+  # Streaming Configuration
+  streaming:
+    checkpoint_location: "./checkpoints"
+    trigger_interval: "10 seconds"
+    output_mode: "append"
+    format: "parquet"
+  
+  # MinIO/S3 Configuration
+  minio:
+    endpoint: "http://localhost:9000"
+    access_key: "minioadmin"
+    secret_key: "minioadmin"
+    bucket_raw: "stock-data-raw"
+    bucket_lakehouse: "stock-data-lakehouse"
+    path_style_access: true
+  
+  # HDFS Configuration
+  hdfs:
+    namenode_host: "localhost"
+    namenode_port: 9000
+    namenode_url: "hdfs://localhost:9000"
+    paths:
+      raw:
+        prices: "/stock-data/raw/prices"
+        volumes: "/stock-data/raw/volumes"
+      lakehouse:
+        prices: "/stock-data/lakehouse/prices"
+        volumes: "/stock-data/lakehouse/volumes"
+    replication_factor: 2
+  
+  # Spark Session Settings
+  session:
+    sql:
+      adaptive:
+        enabled: true
+        coalescePartitions:
+          enabled: true
+      shuffle:
+        partitions: 200
+    streaming:
+      checkpointLocation: "./checkpoints"
+      stopGracefullyOnShutdown: true

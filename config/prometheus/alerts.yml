@@ -1,0 +1,108 @@
+# Prometheus Alerting Rules
+
+groups:
+  - name: infrastructure
+    interval: 30s
+    rules:
+      # Kafka alerts
+      - alert: KafkaDown
+        expr: up{job="kafka"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Kafka broker is down"
+          description: "Kafka broker has been down for more than 1 minute"
+
+      # MinIO alerts
+      - alert: MinIODown
+        expr: up{job="minio"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "MinIO is down"
+          description: "MinIO service has been down for more than 1 minute"
+
+      # HDFS alerts
+      - alert: HDFSNamenodeDown
+        expr: up{job="hdfs-namenode"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "HDFS NameNode is down"
+          description: "HDFS NameNode has been down for more than 1 minute"
+
+      # Airflow alerts
+      - alert: AirflowSchedulerDown
+        expr: up{job="airflow"} == 0
+        for: 2m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Airflow scheduler is down"
+          description: "Airflow scheduler has been down for more than 2 minutes"
+
+      # Trino alerts
+      - alert: TrinoDown
+        expr: up{job="trino"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Trino coordinator is down"
+          description: "Trino coordinator has been down for more than 1 minute"
+
+  - name: data_pipeline
+    interval: 30s
+    rules:
+      # Data pipeline alerts
+      - alert: HighKafkaLag
+        expr: kafka_consumer_lag_sum > 10000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High Kafka consumer lag"
+          description: "Kafka consumer lag is {{ $value }} messages"
+
+      - alert: LowDataIngestionRate
+        expr: rate(kafka_messages_in_total[5m]) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low data ingestion rate"
+          description: "Data ingestion rate is below expected threshold"
+
+      - alert: HighErrorRate
+        expr: rate(kafka_errors_total[5m]) > 0.1
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate in data pipeline"
+          description: "Error rate is {{ $value }} errors per second"
+
+  - name: storage
+    interval: 30s
+    rules:
+      # Storage alerts
+      - alert: HighMinIODiskUsage
+        expr: minio_disk_usage_percent > 80
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "High MinIO disk usage"
+          description: "MinIO disk usage is {{ $value }}%"
+
+      - alert: HDFSLowDataNodes
+        expr: hdfs_datanodes_live < 2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Low number of HDFS DataNodes"
+          description: "Only {{ $value }} DataNodes are live (expected at least 2)"

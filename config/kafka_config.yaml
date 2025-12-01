@@ -1,0 +1,17 @@
+# Kafka Configuration
+kafka:
+  bootstrap_servers: "localhost:9092"
+  topics:
+    stock_prices: "stock-prices"
+    stock_volumes: "stock-volumes"
+  
+  producer:
+    acks: "all"
+    retries: 3
+    batch_size: 16384
+    linger_ms: 10
+  
+  consumer:
+    group_id: "stock-analytics-group"
+    auto_offset_reset: "earliest"
+    enable_auto_commit: true

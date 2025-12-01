@@ -1,0 +1,57 @@
+# Apache Iceberg Configuration
+iceberg:
+  # Catalog configuration
+  catalog:
+    type: "jdbc"  # Options: jdbc, hive, rest
+    name: "stock_analytics"
+    uri: "thrift://localhost:9083"  # Hive Metastore (if using Hive catalog)
+    
+    # JDBC catalog (using PostgreSQL)
+    jdbc:
+      uri: "jdbc:postgresql://postgres:5432/iceberg"
+      warehouse: "s3a://stock-data-lakehouse/iceberg-warehouse"
+      user: "airflow"
+      password: "airflow"
+  
+  # Table settings
+  tables:
+    prices:
+      name: "stock_prices"
+      database: "stock_analytics"
+      location: "s3a://stock-data-lakehouse/iceberg/prices"
+      partition_spec:
+        - field: "symbol"
+          transform: "identity"
+        - field: "date"
+          transform: "day"
+    
+    volumes:
+      name: "stock_volumes"
+      database: "stock_analytics"
+      location: "s3a://stock-data-lakehouse/iceberg/volumes"
+      partition_spec:
+        - field: "symbol"
+          transform: "identity"
+        - field: "date"
+          transform: "day"
+    
+    daily_aggregates:
+      name: "daily_aggregates"
+      database: "stock_analytics"
+      location: "s3a://stock-data-lakehouse/iceberg/daily_aggregates"
+      partition_spec:
+        - field: "symbol"
+          transform: "identity"
+        - field: "date"
+          transform: "day"
+  
+  # Optimization settings
+  optimization:
+    compaction:
+      enabled: true
+      schedule: "daily"
+      target_file_size_mb: 128
+    expiration:
+      enabled: true
+      snapshot_retention_days: 7
+      orphan_file_retention_hours: 24

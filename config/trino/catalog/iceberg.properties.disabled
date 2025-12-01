@@ -1,0 +1,3 @@
+connector.name=iceberg
+iceberg.catalog.type=TESTING
+iceberg.warehouse=s3a://stock-data-lakehouse/iceberg-warehouse

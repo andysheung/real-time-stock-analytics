@@ -1,0 +1,38 @@
+# Airflow Configuration
+airflow:
+  # Database connection
+  database:
+    host: "postgres"
+    port: 5432
+    user: "airflow"
+    password: "airflow"
+    db_name: "airflow"
+  
+  # Executor settings
+  executor: "LocalExecutor"
+  
+  # DAG settings
+  dags:
+    default_args:
+      owner: "data-engineering"
+      depends_on_past: false
+      email_on_failure: false
+      email_on_retry: false
+      retries: 2
+      retry_delay_minutes: 5
+    
+    # Scheduling
+    daily_schedule: "0 2 * * *"  # 2 AM daily
+    hourly_schedule: "0 * * * *"  # Every hour
+  
+  # Spark settings
+  spark:
+    app_name: "StockAnalyticsBatch"
+    master: "local[*]"
+    config_path: "/opt/airflow/config/spark_config.yaml"
+  
+  # Data quality settings
+  data_quality:
+    expectations_store_path: "./great_expectations/expectations"
+    checkpoint_store_path: "./great_expectations/checkpoints"
+    validation_results_path: "./great_expectations/validation_results"
