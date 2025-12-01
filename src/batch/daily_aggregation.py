@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from pyspark.sql import SparkSession
+from pyspark.sql import DataFrame
 from pyspark.sql.functions import (
     col, avg, max as spark_max, min as spark_min, sum as spark_sum,
     count, date_format, to_date, lit
